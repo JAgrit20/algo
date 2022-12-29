@@ -16,14 +16,14 @@ IST = pytz.timezone('Asia/Kolkata')
 
 datetime_ist = datetime.now(IST)
 
-def Send_high():
+def Send_high(count):
     import requests
     import json
 
     url = "https://api.telegram.org/bot5820846301%3AAAHYbFAlHnqDfzbHFPZHdO1O1u6Y21UJzVg/sendMessage"
 
     payload = {
-        "text": "Count is more than 40",
+        "text": f'Count is more than 40={count}',
         "disable_web_page_preview": False,
         "disable_notification": False,
         "reply_to_message_id": None,
@@ -42,14 +42,14 @@ def Send_high():
 # In[5]:
 # Send_high()
 
-def Send_low():
+def Send_low(count):
     import requests
     import json
 
     url = "https://api.telegram.org/bot5921643018:AAHmiFfQudRMNZNl3sG19zafMZD0OdfWGgA/sendMessage"
 
     payload = {
-        "text": "Count is less than 10",
+        "text": f'Count is less than 10={count}',
         "disable_web_page_preview": False,
         "disable_notification": False,
         "reply_to_message_id": None,
@@ -115,11 +115,16 @@ def periodic_work(interval):
               vwap =  float(vwap)
 
               print('vwap:', data['data'][0]['averagePrice'])
+              datetime_ist = datetime.now(IST)
+              # print(datetime_ist)
+              time_curr = int(datetime_ist.strftime('%H'))
+              print((time_curr))
 
 
 
               
               if(latest_price > vwap):
+
                 count = count + 1
                 # print("yes big")
               # else:
@@ -128,10 +133,11 @@ def periodic_work(interval):
               print("ERROR : "+str(e))
 
           print("count",count)
-          if(count>=40):
-            Send_high()
-          if(count<=10):
-            Send_low()
+          if(count>=40 and time_curr >=9 and time_curr<=16 ):
+
+            Send_high(count)
+          if(count<=10 and time_curr >=9 and time_curr<=16 ):
+            Send_low(count)
           counter = counter + 1
           print(counter)
           datetime_ist = datetime.now(IST)
